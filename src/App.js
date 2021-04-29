@@ -13,8 +13,11 @@ import {
 
 import Geocode from 'react-geocode';
 
+// Enviroment Setting
+require('dotenv').config();
+
 // set API for Geocode
-Geocode.setApiKey("Google API");
+Geocode.setApiKey(process.env.REACT_APP_API_CREDENTIAL);
 
 class App extends React.Component {
 
@@ -37,10 +40,10 @@ class App extends React.Component {
 
   // get the city information
   getCity = (addressArray) => {
-    let city = "";
-    for (let index = 0; index < addressArray.length; index++) {
-      if (addressArray[index].types[0] && 'administrative_area_2' === addressArray[index].types[0]) {
-        city = addressArray[index].long_name;
+    let city = '';
+    for (let i = 0; i < addressArray.length; i++) {
+      if (addressArray[i].types[0] && 'administrative_area_level_2' === addressArray[i].types[0]) {
+        city = addressArray[i].long_name;
         return city;
       }
     }
@@ -48,12 +51,12 @@ class App extends React.Component {
 
   // get the area information
   getArea = (addressArray) => {
-    let area = "";
-    for (let index = 0; index < addressArray.length; index++) {
-      if (addressArray[index].types[0]) {
-        for (let j = 0; j < addressArray.length; j++) {
-          if ('sublocality_leve_1' === addressArray[index].types[j] || 'locality' === addressArray[index].types[j]) {
-            area = addressArray[index].long_name;
+    let area = '';
+    for (let i = 0; i < addressArray.length; i++) {
+      if (addressArray[i].types[0]) {
+        for (let j = 0; j < addressArray[i].types.length; j++) {
+          if ('sublocality_level_1' === addressArray[i].types[j] || 'locality' === addressArray[i].types[j]) {
+            area = addressArray[i].long_name;
             return area;
           }
         }
@@ -117,7 +120,7 @@ class App extends React.Component {
         <Marker
           draggable={true}
           onDragEnd={this.onMarkerDragEnd}
-          position={{ lat: this.state.markerPosition.lat, lng: this.state.markerPosition.lat }}>
+          position={{ lat: this.state.markerPosition.lat, lng: this.state.markerPosition.lng }}>
 
           <InfoWindow>
             <div>Hello!</div>
@@ -129,7 +132,7 @@ class App extends React.Component {
 
     return (
       <MapWithAMarker
-        googleMapURL="https://maps.googleapis.com/maps/api/js?key=Google API&v=3.exp&libraries=geometry,drawing,places"
+        googleMapURL={process.env.REACT_APP_GOOGLE_MAP_URL}
         loadingElement={<div style={{ height: `100%` }} />}
         containerElement={<div style={{ height: `400px` }} />}
         mapElement={<div style={{ height: `100%` }} />}
